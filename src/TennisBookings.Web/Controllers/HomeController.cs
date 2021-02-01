@@ -7,13 +7,19 @@ namespace TennisBookings.Web.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IWeatherForecaster _weatherForecaster;
+
+        public HomeController(IWeatherForecaster weatherForecaster)
+        {
+            this._weatherForecaster = weatherForecaster;
+        }
+
         [Route("")]
         public IActionResult Index()
         {
             var viewModel = new HomeViewModel();
 
-            var weatherForecaster = new WeatherForecaster();
-            var currentWeather = weatherForecaster.GetCurrentWeather();
+            var currentWeather = _weatherForecaster.GetCurrentWeather();
 
             switch (currentWeather.WeatherCondition)
             {
@@ -24,7 +30,7 @@ namespace TennisBookings.Web.Controllers
                 case WeatherCondition.Rain:
                     viewModel.WeatherDescription = "We're sorry but it's raining here. No outdoor courts in use.";
                     break;
-                    
+
                 default:
                     viewModel.WeatherDescription = "We don't have the latest weather information right now, please check again later.";
                     break;
